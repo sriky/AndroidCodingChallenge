@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">NYTimesMovieReview</string>
+    <string name="app_name">NYTimes Movie Reviews</string>
+    <string name="api_root_url">http://api.nytimes.com/svc/movies/v2/reviews/</string>
+    <string name="ordered_by_date">by-date</string>
+    <string name="data_updating">Fetching movie reviews</string>
+    <string name="data_fetch_error">Unable to get reviews!</string>
 </resources>
