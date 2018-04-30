@@ -1,14 +1,27 @@
 apply plugin: 'com.android.application'
 
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keys.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keys.properties")
+
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    /* enable data binding */
+    dataBinding.enabled = true
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.sriky.nytimesmoviereview"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 100
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -16,13 +29,51 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    /* gather required ids */
+    buildTypes.each {
+        it.buildConfigField "String", 'NYTIMES_API_KEY',
+                "\"" + keystoreProperties['nytimes_api_key'] +"\""
+    }
+}
+
+ext {
+    supportLibVersion = '27.1.1'
+    espressoLibVersion = '3.0.2'
+    androidTestLibVersion = '1.0.1'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    /* Timber dependencies used for logging */
+    implementation 'com.jakewharton.timber:timber:4.6.0'
+
+    /* Retrofit networking library */
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+
+    /* GSON with Retrofit */
+    implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+
+    // ViewModel and LiveData
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
+    /* AOSP libs */
+    implementation "com.android.support:support-annotations:${supportLibVersion}"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.android.support.test.espresso:espresso-idling-resource:${espressoLibVersion}"
+
+    /* For testing */
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.squareup.retrofit2:retrofit-mock:2.0.0'
+    androidTestImplementation 'com.squareup.okhttp:mockwebserver:2.7.0'
+    androidTestImplementation 'com.squareup.spoon:spoon-client:1.2.0'
+    androidTestImplementation "com.android.support.test:runner:${androidTestLibVersion}"
+    androidTestImplementation "com.android.support.test:rules:${androidTestLibVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:${espressoLibVersion}"
+    androidTestImplementation "com.android.support.test.espresso:espresso-idling-resource:${espressoLibVersion}"
+    androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
 }
