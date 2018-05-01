@@ -59,6 +59,9 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
+    /* Picasso */
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
     /* AOSP libs */
     implementation "com.android.support:support-annotations:${supportLibVersion}"
     implementation "com.android.support:design:${supportLibVersion}"
