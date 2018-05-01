@@ -4,7 +4,9 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import com.sriky.nytimesmoviereview.adaptor.MovieReviewListAdaptor;
 import com.sriky.nytimesmoviereview.data.MovieReviewsViewModel;
 import com.sriky.nytimesmoviereview.data.model.Result;
 import com.sriky.nytimesmoviereview.databinding.ActivityMovieReviewBinding;
+import com.sriky.nytimesmoviereview.test.NYTMovieReviewIdlingResource;
 
 import java.util.List;
 
@@ -31,6 +34,8 @@ public class MovieReviewActivity extends AppCompatActivity {
     private Snackbar mSnackbar;
     /* RecyclerView adaptor */
     private MovieReviewListAdaptor mMovieReviewListAdaptor;
+    /* Idling resource used for testing */
+    private NYTMovieReviewIdlingResource mNYTMovieReviewIdlingResource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +87,7 @@ public class MovieReviewActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<Result> results) {
                 Timber.d("onChanged()");
                 if (results != null) {
-                    Timber.d("Results count: %d", results.size());
-                    hideLoadingAnimation();
-                    if (mMovieReviewListAdaptor != null) {
-                        mMovieReviewListAdaptor.updateReviewList(results);
-                    }
+                    updateViews(results);
                 } else {
                     diplayError();
                 }
@@ -103,10 +104,24 @@ public class MovieReviewActivity extends AppCompatActivity {
      * Initialize and trigger a data fetch.
      */
     private void initAndFetchReviews() {
+        // set idling resource to false to indicate testing to wait,
+        // until we set the state to true, i.e. idle
+        getIdlingResource().setIdleState(false);
+
         // fetch operation from API.
         mMovieReviewsViewModel.fetchMovieReviewsOrderbyDate();
         // display loading animation.
         displayLoadingAnimation();
+    }
+
+    private void updateViews(List<Result> reviews) {
+        Timber.d("Results count: %d", reviews.size());
+        hideLoadingAnimation();
+        if (mMovieReviewListAdaptor != null) {
+            mMovieReviewListAdaptor.updateReviewList(reviews);
+        }
+        // set idling resource to true to indicate testing to continue.
+        getIdlingResource().setIdleState(true);
     }
 
 
@@ -114,7 +129,7 @@ public class MovieReviewActivity extends AppCompatActivity {
      * Displays the loading animation using {@link Snackbar}
      */
     private void displayLoadingAnimation() {
-        if (mSnackbar == null) {
+        //if (mSnackbar == null) {
             mSnackbar = Snackbar.make(mActivityMovieReviewBinding.getRoot(),
                     R.string.data_updating, Snackbar.LENGTH_INDEFINITE);
             ViewGroup contentLay = (ViewGroup) mSnackbar.getView()
@@ -122,7 +137,7 @@ public class MovieReviewActivity extends AppCompatActivity {
 
             ProgressBar item = new ProgressBar(MovieReviewActivity.this);
             contentLay.addView(item, 0);
-        }
+        //}
         mSnackbar.show();
     }
 
@@ -131,21 +146,52 @@ public class MovieReviewActivity extends AppCompatActivity {
      */
     private void diplayError() {
         Timber.d("diplayError");
+
         // hide the loading Snackbar.
         hideLoadingAnimation();
+
         // display the error msg.
-        Snackbar.make(mActivityMovieReviewBinding.getRoot(),
-                R.string.data_fetch_error, Snackbar.LENGTH_LONG).show();
+        mSnackbar = Snackbar.make(mActivityMovieReviewBinding.getRoot(),
+                R.string.data_fetch_error, Snackbar.LENGTH_LONG);
+        mSnackbar.show();
+
+        // set idling resource to true to indicate testing to continue.
+        getIdlingResource().setIdleState(true);
     }
 
     /**
      * Hides the Loading Animation.
      */
     private void hideLoadingAnimation() {
-        if (mSnackbar != null) {
+        if (mSnackbar != null && mSnackbar.isShown()) {
             mSnackbar.dismiss();
         }
         //hide the refresh loading icon.
         mActivityMovieReviewBinding.swipeRefreshMovieReviews.setRefreshing(false);
+    }
+
+    /**
+     * Create or returns an instance of idling resource for testing.
+     *
+     * @return {@link NYTMovieReviewIdlingResource} instance.
+     */
+    @VisibleForTesting
+    @NonNull
+    public synchronized NYTMovieReviewIdlingResource getIdlingResource() {
+        if (mNYTMovieReviewIdlingResource == null) {
+            mNYTMovieReviewIdlingResource = new NYTMovieReviewIdlingResource();
+        }
+        return mNYTMovieReviewIdlingResource;
+    }
+
+    /**
+     * Create or returns an instance of idling resource for testing.
+     *
+     * @return {@link NYTMovieReviewIdlingResource} instance.
+     */
+    @VisibleForTesting
+    @NonNull
+    public Snackbar getSnackbar() {
+        return mSnackbar;
     }
 }
