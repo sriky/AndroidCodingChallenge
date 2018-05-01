@@ -1,0 +1,52 @@
+{
+  "status":"OK",
+  "copyright":"Copyright (c) 2018 The New York Times Company. All Rights Reserved.",
+  "has_more":true,
+  "num_results":2,
+  "results":[
+    {
+      "display_title":"Rogers Park",
+      "mpaa_rating":"",
+      "critics_pick":1,
+      "byline":"GLENN KENNY",
+      "headline":"Review: In \u2018Rogers Park,\u2019 Life and Love in a Chicago Neighborhood",
+      "summary_short":"Two couples struggle to find serenity as middle age and its multiple discontents come breathing down their necks.",
+      "publication_date":"2018-04-26",
+      "opening_date":"2018-04-27",
+      "date_updated":"2018-04-29 16:44:28",
+      "link":{
+        "type":"article",
+        "url":"http:\/\/www.nytimes.com\/2018\/04\/26\/movies\/review-rogers-park.html",
+        "suggested_link_text":"Read the New York Times Review of Rogers Park"
+      },
+      "multimedia":{
+        "type":"mediumThreeByTwo210",
+        "src":"https:\/\/static01.nyt.com\/images\/2018\/04\/27\/arts\/27rogerspark\/merlin_136987035_74324c58-4cb5-45b6-aa83-f687c26008b3-mediumThreeByTwo210.jpg",
+        "width":210,
+        "height":140
+      }
+    },
+    {
+      "display_title":"Ava",
+      "mpaa_rating":"Not Rated",
+      "critics_pick":1,
+      "byline":"JEANNETTE CATSOULIS",
+      "headline":"Review: In \u2018Ava,\u2019 a Tehran Teenager Fights Oppression",
+      "summary_short":"Sadaf Foroughi\u2019s debut feature is visually inventive and dramatically bitter.",
+      "publication_date":"2018-04-26",
+      "opening_date":null,
+      "date_updated":"2018-04-29 16:44:25",
+      "link":{
+        "type":"article",
+        "url":"http:\/\/www.nytimes.com\/2018\/04\/26\/movies\/ava-review.html",
+        "suggested_link_text":"Read the New York Times Review of Ava"
+      },
+      "multimedia":{
+        "type":"mediumThreeByTwo210",
+        "src":"https:\/\/static01.nyt.com\/images\/2018\/04\/27\/arts\/27ava1\/ava1-mediumThreeByTwo210.jpg",
+        "width":210,
+        "height":140
+      }
+    }
+  ]
+}
