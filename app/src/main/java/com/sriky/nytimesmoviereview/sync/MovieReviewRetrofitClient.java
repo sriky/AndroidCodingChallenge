@@ -29,7 +29,8 @@ public class MovieReviewRetrofitClient {
     private static Retrofit sRetrofitInstance = null;
 
     /**
-     * Gets the {@link MovieReviewResponse} for API (http://api.nytimes.com/svc/movies/v2/reviews/dvd-picks.json).
+     * Gets the {@link MovieReviewResponse}
+     * for API (http://api.nytimes.com/svc/movies/v2/reviews/dvd-picks.json).
      *
      * @return {@link MovieReviewResponse} object.
      */
@@ -39,7 +40,7 @@ public class MovieReviewRetrofitClient {
             Response<MovieReviewResponse> response = getApiService(context)
                     .getJsonResponse(orderBy, apiKey).execute();
 
-            Timber.i("fetching data from: %s, sortOder:%s, ApiKey: %s",
+            Timber.i("fetching data from: %s, sortOrder:%s, ApiKey: %s",
                     sRetrofitInstance.baseUrl(), orderBy, apiKey);
             if (response.isSuccessful()) {
                 return response.body();
@@ -58,7 +59,8 @@ public class MovieReviewRetrofitClient {
     private static Retrofit getRetrofitInstance(Context context) {
         if (sRetrofitInstance == null) {
             sRetrofitInstance = new Retrofit.Builder()
-                    .baseUrl(TEST_MODE ? BASE_TEST_URL : context.getString(R.string.api_root_url))
+                    .baseUrl(TEST_MODE ?
+                            BASE_TEST_URL : context.getString(R.string.api_root_url))
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

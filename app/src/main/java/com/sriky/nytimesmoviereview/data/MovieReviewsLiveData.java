@@ -40,9 +40,6 @@ public class MovieReviewsLiveData extends LiveData<List<Result>>
         // sanity check, if the timer is already going then bail out.
         if (mDataFetchTimer != null) return;
 
-        // set/reset the data to null as initial value.
-        // setValue(null);
-
         // start the async task to trigger the data fetch operation.
         mFetchMovieReviewsAsyncTask = new FetchMovieReviewsAsyncTask(mContext,
                 MovieReviewsLiveData.this, sortOrder, BuildConfig.NYTIMES_API_KEY);
