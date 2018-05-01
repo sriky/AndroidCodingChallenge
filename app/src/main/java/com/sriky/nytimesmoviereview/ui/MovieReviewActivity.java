@@ -6,11 +6,14 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.sriky.nytimesmoviereview.R;
+import com.sriky.nytimesmoviereview.adaptor.MovieReviewListAdaptor;
 import com.sriky.nytimesmoviereview.data.MovieReviewsViewModel;
 import com.sriky.nytimesmoviereview.data.model.Result;
 import com.sriky.nytimesmoviereview.databinding.ActivityMovieReviewBinding;
@@ -20,9 +23,14 @@ import java.util.List;
 import timber.log.Timber;
 
 public class MovieReviewActivity extends AppCompatActivity {
+    /* The databinding associated with activity_movie_review layout */
     private ActivityMovieReviewBinding mActivityMovieReviewBinding;
+    /* The ViewModel to store and manage Movie Reviews data. */
     private MovieReviewsViewModel mMovieReviewsViewModel;
+    /* Snackbar used to display loading animation */
     private Snackbar mSnackbar;
+    /* RecyclerView adaptor */
+    private MovieReviewListAdaptor mMovieReviewListAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,28 @@ public class MovieReviewActivity extends AppCompatActivity {
         // disable the tile.
         getSupportActionBar().setTitle("");
 
+        // set up swipe to refresh to get latest data.
+        mActivityMovieReviewBinding.swipeRefreshMovieReviews.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        initAndFetchReviews();
+                    }
+                });
+
+        //set the loading animation color to accent color.
+        mActivityMovieReviewBinding.swipeRefreshMovieReviews.setColorSchemeColors(
+                getResources().getColor(R.color.secondaryColor));
+
+        // setup the adaptor for the movieReviewList RecyclerView.
+        mMovieReviewListAdaptor = new MovieReviewListAdaptor(MovieReviewActivity.this);
+        mActivityMovieReviewBinding.rvMovieReviews.setAdapter(mMovieReviewListAdaptor);
+
+        // set a vertical layout for the movieReviewList RecyclerView.
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MovieReviewActivity.this,
+                LinearLayoutManager.VERTICAL, false);
+        mActivityMovieReviewBinding.rvMovieReviews.setLayoutManager(linearLayoutManager);
+
         // init the fortune ViewModel.
         mMovieReviewsViewModel = ViewModelProviders.of(MovieReviewActivity.this)
                 .get(MovieReviewsViewModel.class);
@@ -53,7 +83,10 @@ public class MovieReviewActivity extends AppCompatActivity {
                 Timber.d("onChanged()");
                 if (results != null) {
                     Timber.d("Results count: %d", results.size());
-                    //TODO update the RV Adaptor.
+                    hideLoadingAnimation();
+                    if (mMovieReviewListAdaptor != null) {
+                        mMovieReviewListAdaptor.updateReviewList(results);
+                    }
                 } else {
                     diplayError();
                 }
@@ -112,5 +145,7 @@ public class MovieReviewActivity extends AppCompatActivity {
         if (mSnackbar != null) {
             mSnackbar.dismiss();
         }
+        //hide the refresh loading icon.
+        mActivityMovieReviewBinding.swipeRefreshMovieReviews.setRefreshing(false);
     }
 }
